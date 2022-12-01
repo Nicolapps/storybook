@@ -50,6 +50,8 @@ Or even apply it to specific stories like so:
   paths={[
     'common/storybook-story-layout-param.js.mdx',
   ]}
+  usesCsf3
+  csf2Path="configure/story-layout#snippet-storybook-story-layout-param"
 />
 
 <!-- prettier-ignore-end -->
