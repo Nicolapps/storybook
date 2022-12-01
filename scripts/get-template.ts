@@ -1,9 +1,4 @@
-import { readdir } from 'fs/promises';
-import { pathExists } from 'fs-extra';
-import { resolve } from 'path';
 import { allTemplates, templatesByCadence } from '../code/lib/cli/src/repro-templates';
-
-const sandboxDir = process.env.SANDBOX_ROOT || resolve(__dirname, '../sandbox');
 
 export type Cadence = keyof typeof templatesByCadence;
 export type Template = {
@@ -12,13 +7,6 @@ export type Template = {
   // there are other fields but we don't use them here
 };
 export type TemplateKey = keyof typeof allTemplates;
-export type Templates = Record<TemplateKey, Template>;
-
-async function getDirectories(source: string) {
-  return (await readdir(source, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name);
-}
 
 export async function getTemplate(
   cadence: Cadence,
@@ -26,16 +14,6 @@ export async function getTemplate(
   { index, total }: { index: number; total: number }
 ) {
   let potentialTemplateKeys: TemplateKey[] = [];
-  if (await pathExists(sandboxDir)) {
-    const sandboxes = await getDirectories(sandboxDir);
-    potentialTemplateKeys = sandboxes
-      .map((dirName) => {
-        return Object.keys(allTemplates).find(
-          (templateKey) => templateKey.replace('/', '-') === dirName
-        );
-      })
-      .filter(Boolean) as TemplateKey[];
-  }
 
   if (potentialTemplateKeys.length === 0) {
     const cadenceTemplates = Object.entries(allTemplates).filter(([key]) =>
